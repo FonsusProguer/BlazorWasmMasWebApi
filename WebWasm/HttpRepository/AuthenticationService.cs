@@ -59,7 +59,8 @@ namespace WebWasm.HttpRepository
                 return result;
 
             await _localStorage.SetItemAsync("authToken", result.Token);
-            ((AuthStateProvider)_authStateProvider).NotifyUserAuthentication(userForAuthentication.Email);
+            ((AuthStateProvider)_authStateProvider).NotifyUserAuthentication(result.Token);
+            //((AuthStateProvider)_authStateProvider).NotifyUserAuthentication(userForAuthentication.Email);
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", result.Token);
 
             return new AuthResponseDto { IsAuthSuccessful = true };

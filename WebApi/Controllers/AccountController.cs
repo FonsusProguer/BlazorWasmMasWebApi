@@ -38,22 +38,40 @@ namespace WebApi.Controllers
             //if (user == null || !await _userManager.CheckPasswordAsync(user, userForAuthentication.Password))
             //    return Unauthorized(new AuthResponseDto { ErrorMessage = "Invalid Authentication" });
 
-            string email = "fonsuspro@gmail.com";
-            if (!userForAuthentication.Email.Equals(email))
+            const string email1 = "fonsuspro@gmail.com";
+            const string email2 = "fonsusgn@gmail.com";
+            const string email3 = "fonsus.surtidora@gmail.com";
+
+            List<string> roles = new List<string>();
+            switch (userForAuthentication.Email)
+            {
+                case email1:
+                    roles.Add("Administrador");
+                    break;
+                case email2:
+                    roles.Add("Visitante");
+                    break;
+                case email3:
+                    roles.Add("Administrador");
+                    roles.Add("Visitante");
+                    break;
+            }
+
+            if (!(userForAuthentication.Email.Equals(email1)
+                || userForAuthentication.Email.Equals(email2)
+                || userForAuthentication.Email.Equals(email3)))
+
                 return Unauthorized(new AuthResponseDto { ErrorMessage = "Usuario incorrecto" });
 
-            var claims = GetClaims(email);
 
 
+            var claims = GetClaims(userForAuthentication.Email, roles);
             //var claims = GetClaims(user);
             var signingCredentials = GetSigningCredentials();
             var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
             var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
             return Ok(new AuthResponseDto { IsAuthSuccessful = true, Token = token });
         }
-
-
-
 
 
         private SigningCredentials GetSigningCredentials()
@@ -64,15 +82,20 @@ namespace WebApi.Controllers
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }
 
-        private List<Claim> GetClaims(string user)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user)
-            };
 
+        private List<Claim> GetClaims(string user, List<string> roles)
+        {
+
+            var claims = new List<Claim>();
+            claims.Add(new Claim(ClaimTypes.Name, user));
+
+            roles.ForEach(role => 
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            });
             return claims;
         }
+       
 
 
         //private List<Claim> GetClaims(IdentityUser user)
