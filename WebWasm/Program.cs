@@ -25,7 +25,7 @@ namespace WebWasm
 
 
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:9090/api/") });
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://192.168.100.188:9095/api/") });
             //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:44354/api/") });
             //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
